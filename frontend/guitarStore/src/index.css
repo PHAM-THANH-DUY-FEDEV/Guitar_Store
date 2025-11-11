@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg-header: #f9faf9;
+  --color-main: #202020;
+  --color-list-item: #6b7280;
+  --color-list-item-hovered: #202020;
+  --color-button-hover: #6b7280;
+  --color-button-hovered: #202020;
+}
+
+:root {
+  font-family: "Poppins", Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
