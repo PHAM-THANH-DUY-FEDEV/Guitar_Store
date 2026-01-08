@@ -1,6 +1,12 @@
-import React, { useEffect, useState } from "react";
-
-const BannerSlider = ({ images, autoPlay = true, duration = 3000 }) => {
+import { useEffect, useState } from "react";
+interface BannerSliderProps {
+  images: string[]; // images là một mảng các chuỗi (đường dẫn ảnh)
+}
+const BannerSlider = (
+  { images }: BannerSliderProps,
+  autoPlay = true,
+  duration = 3000
+) => {
   const [current, setCurrent] = useState(0);
 
   // Next slide
@@ -31,7 +37,7 @@ const BannerSlider = ({ images, autoPlay = true, duration = 3000 }) => {
         className="flex transition-transform duration-700 ease-out"
         style={{ transform: `translateX(-${current * 100}%)` }}
       >
-        {images.map((img, index) => (
+        {images.map((img: string, index: number) => (
           <img
             key={index}
             src={img}
@@ -56,7 +62,7 @@ const BannerSlider = ({ images, autoPlay = true, duration = 3000 }) => {
 
       {/* Dots */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-        {images.map((_, index) => (
+        {images.map((_: any, index: number) => (
           <div
             key={index}
             className={`w-3 h-3 rounded-full cursor-pointer transition-all ${
