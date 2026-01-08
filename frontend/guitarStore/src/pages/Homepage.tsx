@@ -1,6 +1,6 @@
 import axios from "axios";
 import { ListOrdered, ShoppingCart } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppNavigation } from "../hooks/useAppNavigation";
 const Homepage = () => {
   return (
