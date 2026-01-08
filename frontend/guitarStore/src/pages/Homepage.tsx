@@ -1,6 +1,6 @@
 import axios from "axios";
 import BannerSlider from "../components/BannerSlider";
-import { useEffect, useState, createContext } from "react";
+import { useEffect, useState, createContext, useContext } from "react";
 import { ListOrdered, ShoppingCart } from "lucide-react";
 import { useAppNavigation } from "../hooks/useAppNavigation";
 
@@ -200,7 +200,7 @@ const DropdownFixedBar: React.FC<DropdownMenuProps> = ({
   onSelect,
 }) => {
   const [open, setOpen] = useState(false);
-  const [select, setSelected] = useState(0);
+  const [, setSelected] = useState(0);
   const handleSelectFC = (index: number) => {
     setSelected(index);
     onSelect?.(index);
@@ -246,7 +246,7 @@ const DropdownFixedBar: React.FC<DropdownMenuProps> = ({
 };
 
 const ProductList = () => {
-  const { sanPhamList, setSanPhamList, loading } = useSanPham();
+  const { setSanPhamList, loading } = useSanPham();
   const { hover, setHover } = useHover();
   useEffect(() => {
     fetch("http://127.0.0.1:8000/api/sanpham")
