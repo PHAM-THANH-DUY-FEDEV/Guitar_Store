@@ -1,13 +1,9 @@
-/* eslint-disable react-refresh/only-export-components */
 import axios from "axios";
-import { ListOrdered, ShoppingCart } from "lucide-react";
-<<<<<<< HEAD
-import { useEffect, useState } from "react";
-=======
-import { createContext, useContext, useEffect, useState } from "react";
->>>>>>> frontend
-import { useAppNavigation } from "../hooks/useAppNavigation";
 import BannerSlider from "../components/BannerSlider";
+import { useEffect, useState, createContext } from "react";
+import { ListOrdered, ShoppingCart } from "lucide-react";
+import { useAppNavigation } from "../hooks/useAppNavigation";
+
 const Homepage = () => {
   const banners = [
     "/assets/banner1.jpg",
