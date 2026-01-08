@@ -1,19 +1,26 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg-header: #f9faf9;
+  --color-header: #1e1e1e;
+  --color-footer: #1e1e1e;
   --color-main: #202020;
   --color-list-item: #6b7280;
   --color-list-item-hovered: #202020;
   --color-button-hover: #6b7280;
   --color-button-hovered: #202020;
+  --color-dropdown-menu: #c6c6c6;
 }
-
+#root {
+  min-height: 100vh;
+  width: 100%;
+}
+body {
+  height: 100%;
+}
 :root {
   font-family: "Poppins", Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
