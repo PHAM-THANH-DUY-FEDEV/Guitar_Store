@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import axios from "axios";
 import { ListOrdered, ShoppingCart } from "lucide-react";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useAppNavigation } from "../hooks/useAppNavigation";
 import BannerSlider from "../components/BannerSlider";
 const Homepage = () => {
