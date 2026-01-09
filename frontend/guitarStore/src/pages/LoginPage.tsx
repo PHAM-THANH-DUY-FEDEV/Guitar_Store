@@ -26,7 +26,9 @@ const LoginPage = () => {
 
       console.log("Đăng nhập thành công:", res.data);
       alert("Đăng nhập thành công!");
-      // Chuyển sang login
+      axios.defaults.headers.common["Authorization"] =
+        "Bearer" + res.data.token;
+      localStorage.setItem("JWT", JSON.stringify(res.data));
       handleGoToHome();
     } catch (err: any) {
       if (err.response) {

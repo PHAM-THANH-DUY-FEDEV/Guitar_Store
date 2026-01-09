@@ -1,19 +1,36 @@
 import "./App.css";
 import Homepage from "./pages/Homepage";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  BrowserRouter,
+} from "react-router-dom";
+
+import AuthProvider from "./authProvider";
+import Cartpage from "./pages/Cartpage";
+import ProtectedRoute from "./routes/ProtectedRoute";
+
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        {/* Đã xác thực tài khoản -> chuyển route */}
-        <Route path="/" element={<Homepage />} />
-      </Routes>
-    </Router>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Public */}
+          <Route path="/" element={<Homepage />} />
+          <Route path="/login" element={<LoginPage />} />
+
+          {/* Protected */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/cart" element={<Cartpage />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

@@ -13,7 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        //
+        Schema::table('sanpham', function (Blueprint $table) {
+            $table->decimal('gia_san_pham', 65,3)->change();
+        });
     }
 
     /**
@@ -23,6 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('sanpham', function (Blueprint $table) {
+            $table->decimal('gia_san_pham', 15,2)->change();
+        });
     }
 };

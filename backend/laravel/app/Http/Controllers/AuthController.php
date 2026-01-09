@@ -56,7 +56,7 @@ class AuthController extends Controller
             $newCode = 'KH001';
          }
 
-        $khachHang = KhachHang::create([
+        $user = KhachHang::create([
         'ma_khach_hang' => $newCode,
         'so_dien_thoai' => $request->so_dien_thoai,
         'email_khach_hang' => $request->email_khach_hang,
@@ -69,7 +69,7 @@ class AuthController extends Controller
          return response()->json([
         'status' => true,
         'message' => 'Đăng ký thành công!',
-        'data' => $khachHang
+        'data' => $user
          ], 201);
     }
     public function loginCus(Request $request)
@@ -102,7 +102,7 @@ class AuthController extends Controller
         $jwt = JWT::encode($payload, env('JWT_SECRET'), 'HS256');
         return response()->json([
             'token' => $jwt,
-            'khach_hang' => $user
+            'user' => $user
         ]);
    }
 }

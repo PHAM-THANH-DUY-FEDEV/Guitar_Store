@@ -8,9 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Sanpham extends Model
 {
     use HasFactory;
-    protected $table = 'sanpham'; // Tên bảng trong MySQL
-    protected $primaryKey = 'ma_san_pham'; // Khóa chính
-    public $timestamps = false;   // Nếu bảng không có created_at, updated_at
+    protected $table = 'sanpham'; 
+    protected $primaryKey = 'ma_san_pham'; 
+    public $incrementing = false;  
+    protected $keyType = 'string'; 
+    public $timestamps = false; 
     protected $fillable = [
         'ten_san_pham',
         'hang_san_xuat',

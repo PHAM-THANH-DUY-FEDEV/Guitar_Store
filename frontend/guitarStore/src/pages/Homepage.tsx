@@ -1,6 +1,6 @@
 import axios from "axios";
 import BannerSlider from "../components/BannerSlider";
-import { useEffect, useState, createContext, useContext } from "react";
+import { useEffect, useState, createContext, useContext, useMemo } from "react";
 import { ListOrdered, ShoppingCart } from "lucide-react";
 import { useAppNavigation } from "../hooks/useAppNavigation";
 
@@ -10,7 +10,6 @@ const Homepage = () => {
     "/assets/banner2.jpg",
     "/assets/banner3.jpg",
   ];
-
   return (
     <HomepageProvider>
       <div className="shadow-md bg-header">
@@ -35,15 +34,32 @@ type SanPham = {
   gia_san_pham: number;
   mo_ta_san_pham: string;
 };
+type UserInformation = {
+  ma_khach_hang: string;
+  dia_chi: string;
+  ten_dang_nhap: string;
+  email_khach_hang: string;
+  so_dien_thoai: string;
+};
+
+type Token = string;
 
 type HomepageContextType = {
   sanPhamList: SanPham[];
   setSanPhamList: React.Dispatch<React.SetStateAction<SanPham[]>>;
+  token: Token | null;
+  setToken: React.Dispatch<React.SetStateAction<Token | null>>;
+  userInformation: UserInformation | null;
+  setUserInformation: React.Dispatch<
+    React.SetStateAction<UserInformation | null>
+  >;
+
   loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   hover: boolean;
   setHover: React.Dispatch<React.SetStateAction<boolean>>;
 };
+
 const HomepageContext = createContext<HomepageContextType | undefined>(
   undefined
 );
@@ -52,13 +68,44 @@ export const HomepageProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [sanPhamList, setSanPhamList] = useState<SanPham[]>([]);
+  const [token, setToken] = useState<Token | null>(null);
+  const [userInformation, setUserInformation] =
+    useState<UserInformation | null>(null);
   const [loading, setLoading] = useState(false);
   const [hover, setHover] = useState(false);
+
+  useEffect(() => {
+    const storedJWTobj = localStorage.getItem("JWT");
+    if (storedJWTobj) {
+      const parsedStoredJWTonbj = JSON.parse(storedJWTobj);
+      const userInformationNew = {
+        ma_khach_hang: parsedStoredJWTonbj.user.ma_khach_hang,
+        dia_chi: parsedStoredJWTonbj.user.dia_chi,
+        ten_dang_nhap: parsedStoredJWTonbj.user.ten_dang_nhap,
+        email_khach_hang: parsedStoredJWTonbj.user.email_khach_hang,
+        so_dien_thoai: parsedStoredJWTonbj.user.so_dien_thoai,
+      };
+      setUserInformation(userInformationNew);
+      setToken(parsedStoredJWTonbj.token);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (userInformation) {
+      localStorage.setItem("userInformation", JSON.stringify(userInformation));
+    } else {
+      localStorage.removeItem("userInformation");
+    }
+  }, [userInformation]);
   return (
     <HomepageContext.Provider
       value={{
         sanPhamList,
         setSanPhamList,
+        token,
+        setToken,
+        userInformation,
+        setUserInformation,
         loading,
         setLoading,
         hover,
@@ -87,7 +134,9 @@ export const useHover = () => {
 };
 
 function Header() {
-  const { handleGoToLogin } = useAppNavigation();
+  const { setUserInformation, userInformation, token } =
+    useContext(HomepageContext)!;
+  const { handleGoToLogin, handleGotoCart } = useAppNavigation();
   return (
     <header className="flex justify-between items-center px-6 py-3  md:max-w-[1480px] mx-auto bg-bg-header">
       <div className="flex items-center">
@@ -102,26 +151,43 @@ function Header() {
           <ListOrdered className="w-5 h-5 mr-1" /> {/* Thêm mr-1 cho đẹp hơn */}
           <span>Đơn hàng</span>
         </button>
-        <button className="flex items-center gap-2 px-3 py-1 rounded hover:bg-gray-200 text-white hover:text-list-item-hovered transition">
+        <button
+          className="flex items-center gap-2 px-3 py-1 rounded hover:bg-gray-200 text-white hover:text-list-item-hovered transition"
+          onClick={() => {
+            handleGotoCart();
+          }}
+        >
           <ShoppingCart className="w-5 h-5 mr-1" />
           <span>Giỏ hàng</span>
         </button>
-
-        <button
-          onClick={() => {
-            handleGoToLogin();
-          }}
-          className="px-4 py-1 rounded bg-button-hover text-white hover:text-list-item-hovered hover:bg-gray-200 transition"
-        >
-          Đăng nhập
-        </button>
+        {token ? (
+          <button
+            onClick={() => {
+              delete axios.defaults.headers.common["Authorization"];
+              localStorage.removeItem("JWT");
+              handleGoToLogin();
+            }}
+            className="px-4 py-1 rounded bg-button-hover text-white hover:text-list-item-hovered hover:bg-gray-200 transition"
+          >
+            Đăng xuất
+          </button>
+        ) : (
+          <button
+            onClick={() => {
+              handleGoToLogin();
+            }}
+            className="px-4 py-1 rounded bg-button-hover text-white hover:text-list-item-hovered hover:bg-gray-200 transition"
+          >
+            Đăng nhập
+          </button>
+        )}
       </div>
     </header>
   );
 }
 const FixedBar = () => {
   const [keyword, setKeyword] = useState("");
-  const { setSanPhamList, setLoading } = useSanPham();
+  const { sanPhamList, setSanPhamList, setLoading } = useSanPham();
   const fetchData = async (keyword = "") => {
     setLoading(true);
     try {
@@ -175,7 +241,7 @@ const FixedBar = () => {
           onSelect={(index) => {
             console.log("Đã chọn option:", index);
           }}
-        ></DropdownFixedBar>{" "}
+        ></DropdownFixedBar>
         <DropdownFixedBar
           title="Thương hiệu"
           options={["Morris", "Guitar Trần", "Yamaha"]}
@@ -246,7 +312,7 @@ const DropdownFixedBar: React.FC<DropdownMenuProps> = ({
 };
 
 const ProductList = () => {
-  const { setSanPhamList, loading } = useSanPham();
+  const { sanPhamList, setSanPhamList, loading } = useSanPham();
   const { hover, setHover } = useHover();
   useEffect(() => {
     fetch("http://127.0.0.1:8000/api/sanpham")
@@ -264,137 +330,47 @@ const ProductList = () => {
     <>
       <div className="grid xl:grid-cols-4 md:grid-cols-2 lg:grid-cols-3 gap-6 m-6">
         {loading && <p>Đang tải...</p>}
-        {/* {sanPhamList.length > 0 ? (
+        {sanPhamList.length > 0 ? (
           sanPhamList.map((sanpham, index) => (
             <div key={index}>
-              <h3>{sanpham.ten_san_pham}</h3>
-              <p>Hãng: {sanpham.hang_san_xuat}</p>
-              <p>Năm: {sanpham.nam_san_xuat}</p>
-              <p>Giá: {sanpham.gia_san_pham}₫</p>
-              <p>Mô tả: {sanpham.mo_ta_san_pham}</p>
+              <div
+                className="mx-auto w-64 rounded-3xl bg-linear-to-b from-[#ccc] to-gray-600 p-4 relative overflow-hidden shadow-xl"
+                onMouseEnter={() => {
+                  setHover(true);
+                }}
+                onMouseLeave={() => {
+                  setHover(false);
+                }}
+              >
+                <div className="absolute top-4 right-4 bg-gray-600 text-white text-[10px] px-3 py-1 rounded-full tracking-wider backdrop-blur-md">
+                  {sanpham.ten_san_pham}
+                </div>
+                <div className="mt-10 mb-6 flex justify-center">
+                  <img
+                    src="/assets/test-image-sp.png"
+                    alt="watch"
+                    className="w-60 h-60 object-contain drop-shadow-[0_10px_10px_rgba(0,0,0,0.3)]"
+                  />
+                </div>
+                <div className="text-left text-white/80 text-xs tracking-wide">
+                  <div className="mb-1">{sanpham.ma_san_pham}</div>
+                  <div className="text-[11px] text-white/60">
+                    {sanpham.hang_san_xuat}
+                  </div>
+                  <div
+                    className="mb-1 transition-opacity duration-1000"
+                    style={pricestyle}
+                  >
+                    {sanpham.gia_san_pham}
+                  </div>
+                </div>
+              </div>
             </div>
           ))
         ) : (
           <p>Không tìm thấy sản phẩm</p>
-        )} */}
+        )}
         {/* Test giao diện */}
-        <div
-          className="mx-auto w-64 rounded-3xl bg-linear-to-b from-[#ccc] to-gray-600 p-4 relative overflow-hidden shadow-xl"
-          onMouseEnter={() => {
-            setHover(true);
-          }}
-          onMouseLeave={() => {
-            setHover(false);
-          }}
-        >
-          <div className="absolute top-4 right-4 bg-gray-600 text-white text-[10px] px-3 py-1 rounded-full tracking-wider backdrop-blur-md">
-            Tokyo Gakki EXPO 2025 Limited Edition
-          </div>
-          {/* Ảnh sản phẩm */}
-          <div className="mt-10 mb-6 flex justify-center">
-            <img
-              src="/assets/test-image-sp.png"
-              alt="watch"
-              className="w-60 h-60 object-contain drop-shadow-[0_10px_10px_rgba(0,0,0,0.3)]"
-            />
-          </div>
-
-          {/* Text bên dưới */}
-          <div className="text-left text-white/80 text-xs tracking-wide">
-            <div className="mb-1">FE-93</div>
-            <div className="text-[11px] text-white/60">HAND MADE PREMIUM</div>
-            <div
-              className="mb-1 transition-opacity duration-1000"
-              style={pricestyle}
-            >
-              5.000.000đ
-            </div>
-          </div>
-        </div>
-        <div
-          className="mx-auto w-64 rounded-3xl bg-linear-to-b from-[#ccc] to-gray-600 p-4 relative overflow-hidden shadow-xl"
-          onMouseEnter={() => {
-            setHover(true);
-          }}
-          onMouseLeave={() => {
-            setHover(false);
-          }}
-        >
-          <div className="absolute top-4 right-4 bg-gray-600 text-white text-[10px] px-3 py-1 rounded-full tracking-wider backdrop-blur-md">
-            Tokyo Gakki EXPO 2025 Limited Edition
-          </div>
-          {/* Ảnh sản phẩm */}
-          <div className="mt-10 mb-6 flex justify-center">
-            <img
-              src="/assets/test-image-sp.png"
-              alt="watch"
-              className="w-60 h-60 object-contain drop-shadow-[0_10px_10px_rgba(0,0,0,0.3)]"
-            />
-          </div>
-
-          {/* Text bên dưới */}
-          <div className="text-left text-white/80 text-xs tracking-wide">
-            <div className="mb-1">FE-93</div>
-            <div className="text-[11px] text-white/60">HAND MADE PREMIUM</div>
-            {hover == true ? <div className="mb-1">5.000.000đ</div> : ""}
-          </div>
-        </div>
-        <div
-          className="mx-auto w-64 rounded-3xl bg-linear-to-b from-[#ccc] to-gray-600 p-4 relative overflow-hidden shadow-xl"
-          onMouseEnter={() => {
-            setHover(true);
-          }}
-          onMouseLeave={() => {
-            setHover(false);
-          }}
-        >
-          <div className="absolute top-4 right-4 bg-gray-600 text-white text-[10px] px-3 py-1 rounded-full tracking-wider backdrop-blur-md">
-            Tokyo Gakki EXPO 2025 Limited Edition
-          </div>
-          {/* Ảnh sản phẩm */}
-          <div className="mt-10 mb-6 flex justify-center">
-            <img
-              src="/assets/test-image-sp.png"
-              alt="watch"
-              className="w-60 h-60 object-contain drop-shadow-[0_10px_10px_rgba(0,0,0,0.3)]"
-            />
-          </div>
-
-          {/* Text bên dưới */}
-          <div className="text-left text-white/80 text-xs tracking-wide">
-            <div className="mb-1">FE-93</div>
-            <div className="text-[11px] text-white/60">HAND MADE PREMIUM</div>
-            {hover == true ? <div className="mb-1">5.000.000đ</div> : ""}
-          </div>
-        </div>{" "}
-        <div
-          className="mx-auto w-64 rounded-3xl bg-linear-to-b from-[#ccc] to-gray-600 p-4 relative overflow-hidden shadow-xl"
-          onMouseEnter={() => {
-            setHover(true);
-          }}
-          onMouseLeave={() => {
-            setHover(false);
-          }}
-        >
-          <div className="absolute top-4 right-4 bg-gray-600 text-white text-[10px] px-3 py-1 rounded-full tracking-wider backdrop-blur-md">
-            Tokyo Gakki EXPO 2025 Limited Edition
-          </div>
-          {/* Ảnh sản phẩm */}
-          <div className="mt-10 mb-6 flex justify-center">
-            <img
-              src="/assets/test-image-sp.png"
-              alt="watch"
-              className="w-60 h-60 object-contain drop-shadow-[0_10px_10px_rgba(0,0,0,0.3)]"
-            />
-          </div>
-
-          {/* Text bên dưới */}
-          <div className="text-left text-white/80 text-xs tracking-wide">
-            <div className="mb-1">FE-93</div>
-            <div className="text-[11px] text-white/60">HAND MADE PREMIUM</div>
-            {hover == true ? <div className="mb-1">5.000.000đ</div> : ""}
-          </div>
-        </div>
       </div>
     </>
   );

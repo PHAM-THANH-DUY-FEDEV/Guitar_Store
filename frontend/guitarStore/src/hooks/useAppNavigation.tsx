@@ -24,12 +24,16 @@ export const useAppNavigation = () => {
     navigate(-1); // Quay lại trang trước
   };
 
+  const handleGotoCart = () => {
+    navigate("/cart");
+  };
   // 3. Trả về các hàm này
   return {
     handleGoToLogin,
     handleGoToRegister,
     handleGoToHome,
     handleGoBack,
+    handleGotoCart,
     // Thêm bất kỳ hàm điều hướng nào khác bạn cần ở đây
   };
 };
