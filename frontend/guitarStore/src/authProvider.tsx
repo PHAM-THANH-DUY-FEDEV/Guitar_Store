@@ -14,9 +14,16 @@ interface AuthProviderProps {
 }
 
 const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [token, setTokenState] = useState<string | null>(
-    localStorage.getItem("token")
-  );
+  const [token, setTokenState] = useState<string | null>(() => {
+    const jwtString = localStorage.getItem("JWT");
+    if (!jwtString) return null;
+    try {
+      const jwtObj = JSON.parse(jwtString);
+      return typeof jwtObj.token === "string" ? jwtObj.token : null;
+    } catch {
+      return null;
+    }
+  });
 
   const setToken = (newToken: string | null) => {
     setTokenState(newToken);

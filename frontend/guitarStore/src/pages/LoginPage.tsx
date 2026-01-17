@@ -7,8 +7,14 @@ interface LoginFormInputs {
   ten_dang_nhap: string;
   mat_khau: string;
 }
-const LoginPage = () => {
-  const { handleGoToRegister, handleGoToHome } = useAppNavigation();
+
+type checkTypeLogin = {
+  admin?: number;
+};
+
+const LoginPage: React.FC<checkTypeLogin> = ({ admin }) => {
+  const { handleGoToRegister, handleGoToHome, handleGoToAdminPage } =
+    useAppNavigation();
   const {
     register,
     handleSubmit,
@@ -18,18 +24,29 @@ const LoginPage = () => {
   const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
     console.log("Dữ liệu đăng nhập:", data);
     try {
-      const res = await axios.post("http://127.0.0.1:8000/api/login", data, {
-        headers: {
-          Accept: "application/json",
-        },
-      });
+      const res = await axios.post(
+        `${
+          admin == 0
+            ? "http://127.0.0.1:8000/api/login"
+            : "http://127.0.0.1:8000/api/login/admin"
+        }`,
+        data,
+        {
+          headers: {
+            Accept: "application/json",
+          },
+        }
+      );
 
       console.log("Đăng nhập thành công:", res.data);
       alert("Đăng nhập thành công!");
       axios.defaults.headers.common["Authorization"] =
         "Bearer" + res.data.token;
-      localStorage.setItem("JWT", JSON.stringify(res.data));
-      handleGoToHome();
+      localStorage.setItem(
+        admin == 0 ? "JWT" : "JWTAdmin",
+        JSON.stringify(res.data)
+      );
+      admin == 0 ? handleGoToHome() : handleGoToAdminPage();
     } catch (err: any) {
       if (err.response) {
         console.error("Lỗi server:", err.response.data);
@@ -41,10 +58,37 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-md">
+    <div className="min-h-screen flex flex-row bg-[url('/assets/banner1.jpg')] flex items-center justify-center bg-gray-100">
+      <div className="absolute inset-0 bg-black/30" />
+      <div className="flex flex-col gap-5 z-20 w-[400px] text-white pr-10">
+        <h1 className=" w-[380px] mr-20 text-[60px]">Duy Guitar</h1>
+        <p className="border-b-2 border-t-2 border-white text-[20px]">
+          Tôi thấy cậu quen quá chúng ta đã gặp nhau chưa nhỉ, đăng nhập để Duy
+          Guitar có thể nhận ra bạn nào khách hàng đáng kính.
+        </p>
+        <div className="w-[360px] min-w-[200px] items-top">
+          <img
+            src="/assets/logo_2.png"
+            alt="DuyGuitar Logo"
+            className="h-auto max-h-22 w-full object-cover shadow-xl rounded-md py-1"
+          />
+          <div className="mt-4 flex gap-5">
+            <img
+              src="/assets/fb_icon.png"
+              alt="DuyGuitar Logo"
+              className="h-10 cursor-pointer object-cover shadow-xl rounded-md py-1"
+            />
+            <img
+              src="/assets/ytb_icon.png"
+              alt="DuyGuitar Logo"
+              className="h-10.5 cursor-pointer object-cover shadow-xl rounded-md py-1"
+            />
+          </div>
+        </div>
+      </div>
+      <div className="bg-white backdrop-blur-md p-8 rounded-lg shadow-xl w-full max-w-md">
         <h2 className="text-3xl font-bold text-center text-duyguitar-dark mb-6">
-          Đăng nhập
+          {admin == 0 ? "Đăng nhập" : "Đăng nhập admin"}
         </h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <div>

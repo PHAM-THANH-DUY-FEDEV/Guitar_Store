@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Models\KhachHang;
+use App\Models\Admin;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
@@ -72,6 +73,7 @@ class AuthController extends Controller
         'data' => $user
          ], 201);
     }
+
     public function loginCus(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -95,6 +97,39 @@ class AuthController extends Controller
 
         $payload = [
         'sub' => $user->ma_khach_hang,
+        'name' => $user->ten_dang_nhap,
+        'iat' => time(),
+        'exp' => time() + 3600 // 1 tiếng
+        ];
+        $jwt = JWT::encode($payload, env('JWT_SECRET'), 'HS256');
+        return response()->json([
+            'token' => $jwt,
+            'user' => $user
+        ]);
+    }
+    public function loginAdmin(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'ten_dang_nhap' => 'required|string|max:50',
+            'mat_khau' => 'required|min:6',
+        ]);
+        if ($validator -> fails()){
+         return response()->json([
+            'status' => false,
+            'errors' => $validator->errors()
+         ],422);
+        };
+
+        $user = Admin::where('ten_dang_nhap', $request->ten_dang_nhap)->first();
+        if (! $user || !Hash::check($request->mat_khau,$user->mat_khau)){
+         return response()->json([
+            'status' => false,
+            'errors' => 'tên đăng nhập hoặc mật khẩu không đúng'
+         ],401);
+        };
+
+        $payload = [
+        'sub' => $user->ma_admin,
         'name' => $user->ten_dang_nhap,
         'iat' => time(),
         'exp' => time() + 3600 // 1 tiếng

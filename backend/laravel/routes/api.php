@@ -20,3 +20,4 @@ Route::get('/sanpham/search', [SanphamController::class, 'search']);
 Route::get('/sanpham', [SanphamController::class, 'index']);
 Route::post('/register', [AuthController::class, 'registerCus']);
 Route::post('/login', [AuthController::class, 'loginCus']);
+Route::post('/login/admin', [AuthController::class, 'loginAdmin']);

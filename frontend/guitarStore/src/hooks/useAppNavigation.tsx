@@ -12,6 +12,10 @@ export const useAppNavigation = () => {
     navigate("/login");
   };
 
+  const handleGoToAdminPage = () => {
+    navigate("/admin");
+  };
+
   const handleGoToRegister = () => {
     navigate("/register");
   };
@@ -34,6 +38,7 @@ export const useAppNavigation = () => {
     handleGoToHome,
     handleGoBack,
     handleGotoCart,
+    handleGoToAdminPage,
     // Thêm bất kỳ hàm điều hướng nào khác bạn cần ở đây
   };
 };

@@ -47,8 +47,40 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-md">
+    <div className="min-h-screen flex flex-row bg-[url('/assets/banner1.jpg')] items-center justify-center bg-gray-100 p-4">
+      <div className="absolute inset-0 bg-black/60" />
+      <div className="flex flex-col gap-5 z-20 w-[400px] text-white pr-10 mb-70">
+        <h1 className=" w-[380px] mr-20 text-[60px] ">Duy Guitar</h1>
+        <p className="border-b-2 border-t-2 border-white text-[20px]">
+          Mỗi cây đàn là một câu chuyện, mỗi hợp âm là một cảm xúc chưa kịp gọi
+          tên. Duy Guitar đồng hành cùng bạn trên hành trình chạm đến âm nhạc
+          của riêng mình.
+        </p>
+        <p className="border-b-2 border-white text-[20px]">
+          Đăng ký tài khoản để trở thành khách hàng thân thiết của Duy Guitar
+          nhé.
+        </p>
+        <div className="w-360px] min-w-[200px] items-top">
+          <img
+            src="/assets/logo_2.png"
+            alt="DuyGuitar Logo"
+            className="h-auto max-h-22 w-full object-cover shadow-xl rounded-md py-1"
+          />
+          <div className="mt-4 flex gap-5">
+            <img
+              src="/assets/fb_icon.png"
+              alt="DuyGuitar Logo"
+              className="h-10 cursor-pointer object-cover shadow-xl rounded-md py-1"
+            />
+            <img
+              src="/assets/ytb_icon.png"
+              alt="DuyGuitar Logo"
+              className="h-10.5 cursor-pointer object-cover shadow-xl rounded-md py-1"
+            />
+          </div>
+        </div>
+      </div>
+      <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-md z-10">
         <h2 className="text-3xl font-bold text-center text-duyguitar-dark mb-6">
           Đăng ký
         </h2>

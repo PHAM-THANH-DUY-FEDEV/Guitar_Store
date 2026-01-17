@@ -1,6 +1,6 @@
 import axios from "axios";
 import BannerSlider from "../components/BannerSlider";
-import { useEffect, useState, createContext, useContext, useMemo } from "react";
+import { useEffect, useState, createContext, useContext } from "react";
 import { ListOrdered, ShoppingCart } from "lucide-react";
 import { useAppNavigation } from "../hooks/useAppNavigation";
 
