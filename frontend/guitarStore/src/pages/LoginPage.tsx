@@ -63,8 +63,9 @@ const LoginPage: React.FC<checkTypeLogin> = ({ admin }) => {
       <div className="flex flex-col gap-5 z-20 w-[400px] text-white pr-10">
         <h1 className=" w-[380px] mr-20 text-[60px]">Duy Guitar</h1>
         <p className="border-b-2 border-t-2 border-white text-[20px]">
-          Tôi thấy cậu quen quá chúng ta đã gặp nhau chưa nhỉ, đăng nhập để Duy
-          Guitar có thể nhận ra bạn nào khách hàng đáng kính.
+          {admin == 0
+            ? "Tôi thấy cậu quen quá chúng ta đã gặp nhau chưa nhỉ, đăng nhập để Duy Guitar có thể nhận ra bạn nào khách hàng đáng kính."
+            : "Ô xin lỗi !!, không phận sự miễn vào vui lòng đăng nhập để chứng minh danh phận của bạn"}
         </p>
         <div className="w-[360px] min-w-[200px] items-top">
           <img
